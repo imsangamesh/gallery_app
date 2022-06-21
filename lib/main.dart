@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gallery_app/data.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'my_photo.dart';
 
 void main() async {
   runApp(const MyApp());
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  prefs.setStringList('images', images);
 }
 
 class MyApp extends StatelessWidget {
