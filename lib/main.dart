@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gallery_app/data.dart';
-import 'package:get/get.dart';
-
-import 'my_photo.dart';
+import 'package:gallery_app/my_photo.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -13,7 +11,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -28,16 +26,13 @@ class MyApp extends StatelessWidget {
           ),
         ),
         body: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 150,
-            childAspectRatio: 1,
-            crossAxisSpacing: 2,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
             mainAxisSpacing: 2,
+            crossAxisSpacing: 2,
           ),
+          itemBuilder: (context, index) => PhotoTile(index),
           itemCount: images.length,
-          itemBuilder: (context, index) {
-            return PhotoTile(index);
-          },
         ),
       ),
     );
@@ -54,14 +49,27 @@ class PhotoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Hero(
-      tag: index,
-      child: InkWell(
-        splashColor: Colors.pink.withAlpha(20),
-        onTap: () => Get.to(() => MyPhoto(index)),
-        child: Ink.image(
-          image: NetworkImage(images[index]),
-        ),
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => MyPhoto(index)),
+      ),
+      child: Image.network(
+        images[index],
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Center(
+            child: SizedBox(
+              width: 15,
+              height: 15,
+              child: CircularProgressIndicator(
+                value: loadingProgress.expectedTotalBytes == null
+                    ? null
+                    : loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes!,
+              ),
+            ),
+          );
+        },
       ),
     );
   }
